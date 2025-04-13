@@ -27,6 +27,7 @@ import { easeInOutCubic } from '../utils/easing';
 import resizeViews from '../utils/resizeViews';
 import scrollWhileIdle from '../utils/scrollWhileIdle';
 import ElectronUtils from '../utils/electronUtils';
+import { logger } from '../utils/tracer-logger.js';
 import { login } from '../actions/bot';
 import electronObjects from '../store/electronObjects';
 
@@ -41,8 +42,7 @@ export default (store: Store) =>
       const browserView = electronObjects.views[name];
 
       if (browserView === undefined) {
-        // eslint-disable-next-line no-console
-        console.error(`No view registered for ${name}!`);
+        logger.error(`No view registered for ${name}!`);
       } else {
         browserView.webContents.loadURL(targetUrl);
       }
@@ -52,8 +52,7 @@ export default (store: Store) =>
       const { window } = electronObjects;
 
       if (window === undefined || window === null) {
-        // eslint-disable-next-line no-console
-        console.error('Main window not defined!');
+        logger.error('Main window not defined!');
         return;
       }
 
@@ -99,6 +98,7 @@ export default (store: Store) =>
     }
 
     if (action.type === HIDE_CONFIGURATION) {
+      logger.info("Close configuration...");
       const { immobilienScout24 } = store.getState().configuration;
       store.dispatch(login(immobilienScout24));
     }

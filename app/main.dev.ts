@@ -23,6 +23,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 const isDevelopment = process.env.NODE_ENV === 'development';
 const enableDebug = process.env.ENABLE_DEBUG === 'true';
 const enableDevtools = isDevelopment || enableDebug;
+logger.info("ENVIRONMENT prod:%s dev:%s debug:%s tools:%s", isProduction, isDevelopment, enableDebug, enableDevtools)
 
 let isLaunching = true;
 
@@ -57,7 +58,7 @@ const installExtensions = async () => {
 const appOnWindowAllClosed = async () => {
   logger.trace();
   app.quit();
-}
+};
 
 const appOnReady = async (store) => {
   logger.trace();
@@ -70,6 +71,7 @@ const appOnReady = async (store) => {
   }
 
   /* Initialize views... */
+  logger.info('Initialize views...');
 
   mainWindow = new BrowserWindow({
     show: false,
@@ -85,7 +87,8 @@ const appOnReady = async (store) => {
     options: BrowserViewConstructorOptions & { transparent?: boolean },
     initialUrl: string
   ): BrowserView => {
-    logger.trace("args : %s %j %s", name, options, initialUrl);
+    logger.trace('name:%s', name);
+    logger.log('options:%j initialUrl:%s', options, initialUrl);
     if (mainWindow === undefined || mainWindow === null) {
       throw Error('Main window not defined!');
     }
@@ -172,6 +175,7 @@ const appOnReady = async (store) => {
   }
 
   /* Add event listeners... */
+  logger.info('Add event listeners...');
 
   const configurationViewDidFinishLoad = async () => {
     logger.trace();
@@ -194,16 +198,19 @@ const appOnReady = async (store) => {
       configurationView.webContents.focus();
       isLaunching = false;
     }
-  }
-  configurationView.webContents.on('did-finish-load', () => configurationViewDidFinishLoad());
+  };
+  configurationView.webContents.on('did-finish-load', () =>
+    configurationViewDidFinishLoad()
+  );
 
   const mainWindowOnClosed = async (store) => {
-    logger.trace()
+    logger.trace();
     mainWindow = null;
-  }
+  };
   mainWindow.on('closed', () => mainWindowOnClosed());
   mainWindow.setMenuBarVisibility(false);
 
+  logger.info('Initialize AppUpdater...');
   AppUpdater.init();
   AppUpdater.onUpdateAvailable((version) => {
     store.dispatch(setAvailableVersion(version));
@@ -216,13 +223,14 @@ const appOnReady = async (store) => {
   AppUpdater.onDownloadProgress((percentage) => {
     store.dispatch(setUpdateDownloadProgress(percentage));
   });
-}
+  logger.trace('DONE');
+};
 
 const configureStoreThen = async (store) => {
   logger.trace();
   app.on('window-all-closed', () => appOnWindowAllClosed());
   app.on('ready', () => appOnReady(store));
-}
+};
 
 configureStore(MAIN, isDevelopment) // eslint-disable-next-line promise/always-return
   .then((store) => configureStoreThen(store))
