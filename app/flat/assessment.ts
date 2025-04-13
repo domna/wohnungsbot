@@ -36,7 +36,7 @@ export function assessFlat(
   const flatPostcode = overviewDataEntry.address.postcode;
   reasons.push({
     reason: `Postleitzahl: ${flatPostcode}`,
-    result: configuration.filter.postcodes.includes(flatPostcode)
+    result: true
   });
 
   if (

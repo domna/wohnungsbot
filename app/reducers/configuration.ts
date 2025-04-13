@@ -140,7 +140,7 @@ export type Configuration = {
   stage: number;
   loaded: boolean;
   filter: Filter;
-  searchUrl?: string;
+  searchUrl: string | null;
   applicationText: string;
   contactData: ContactData;
   immobilienScout24: LoginData;
@@ -171,6 +171,7 @@ const defaultConfiguration: Configuration = {
     onlySublease: false,
     noSublease: false
   },
+  searchUrl: null,
   applicationText: `${APPLICATION_TEMPLATES.SALUTATION},\n`,
   immobilienScout24: {
     useAccount: UseAccount.NEIN,

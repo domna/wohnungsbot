@@ -13,6 +13,10 @@ export function flatPageUrl(flatId: string): string {
   return `https://www.immobilienscout24.de/expose/${flatId}`;
 }
 export function generateSearchUrl(configuration: Configuration): string {
+  if (configuration.searchUrl !== null) {
+    return configuration.searchUrl;
+  }
+
   const overlappingDistricts = districts.filter((district) =>
     district.postcodes.some((postcode) =>
       configuration.filter.postcodes.includes(postcode)
